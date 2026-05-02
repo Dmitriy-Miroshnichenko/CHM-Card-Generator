@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHM Card Generator - Pro Layout & Templates</title>
+  <!-- Include jsPDF library for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef2f3;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 1300px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 350px 1fr 1fr;
+      gap: 20px;
+    }
+    .header {
+      grid-column: span 3;
+      text-align: center;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 15px;
+      margin-bottom: 10px;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      height: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    /* Custom scrollbar for controls */
+    .controls::-webkit-scrollbar {
+      width: 6px;
+    }
+    .controls::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 3px;
+    }
+    .control-group {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .control-group h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #2e3e30;
+      text-transform: uppercase;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 8px;
+      color: #666;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+    .pos-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .flex-row {
+      display: flex;
+      gap: 5px;
+      margin-top: 5px;
+    }
+    .btn {
+      padding: 10px 15px;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+      text-align: center;
+      flex: 1;
+    }
+    .btn-large {
+      padding: 15px;
+      font-size: 16px;
+    }
+    .btn-primary { background-color: #2e3e30; }
+    .btn-primary:hover { background-color: #1a241b; }
+
+    .btn-secondary { background-color: #555; }
+    .btn-secondary:hover { background-color: #333; }
+
+    .btn-danger { background-color: #a03030; }
+    .btn-danger:hover { background-color: #7a2020; }
+
+    .preview-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #e0e0e0;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .info-text {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    canvas {
+      max-width: 100%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      background: white;
+    }
+    #a4Canvas {
+      width: 100%;
+      max-width: 350px;
+      height: auto;
+      aspect-ratio: 1 / 1.414;
+    }
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>CHM Membership Card Creator</h1>
+    <p>Fill data, adjust layout, save templates, and export to A4 PDF</p>
+  </div>
+
+  <!-- Controls Panel -->
+  <div class="controls">
+    <div class="control-group">
+      <h3>1. Template File</h3>
+      <input type="file" id="imageLoader" accept="image/*" />
+    </div>
+
+    <div class="control-group">
+      <h3>2. Saved Settings (Local)</h3>
+      <label>Save Current Settings As:</label>
+      <div class="flex-row">
+        <input type="text" id="templateNameInput" placeholder="E.g., Default Setup" />
+        <button class="btn btn-primary" id="saveTemplateBtn" style="flex: 0 0 auto;">Save</button>
+      </div>
+
+      <label>Load Saved Settings:</label>
+      <select id="templateSelect">
+        <option value="">-- Select a template --</option>
+      </select>
+      <div class="flex-row">
+        <button class="btn btn-secondary" id="loadTemplateBtn">Load</button>
+        <button class="btn btn-danger" id="deleteTemplateBtn">Delete</button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <h3>3. Member Information</h3>
+      <label>Member Name</label>
+      <input type="text" id="nameInput" placeholder="Enter Name" value="John Doe" />
+      <label>Member Since</label>
+      <input type="text" id="sinceInput" placeholder="Year" value="2026" />
+      <label>Member ID</label>
+      <input type="text" id="idInput" placeholder="ID Number" value="001" />
+    </div>
+
+    <div class="control-group">
+      <h3>4. Text Positioning (X / Y)</h3>
+      <label>Name Position</label>
+      <div class="pos-inputs">
+        <input type="number" id="nameX" value="340" step="1" title="X Position" />
+        <input type="number" id="nameY" value="745" step="1" title="Y Position" />
+      </div>
+      <label>Since Position</label>
+      <div class="pos-inputs">
+        <input type="number" id="sinceX" value="340" step="1" title="X Position" />
+        <input type="number" id="sinceY" value="840" step="1" title="Y Position" />
+      </div>
+      <label>ID Position</label>
+      <div class="pos-inputs">
+        <input type="number" id="idX" value="650" step="1" title="X Position" />
+        <input type="number" id="idY" value="840" step="1" title="Y Position" />
+      </div>
+    </div>
+
+    <div class="control-group">
+      <h3>5. A4 Layout Settings (mm)</h3>
+      <label>Number of Cards to Export</label>
+      <input type="number" id="cardCount" value="3" min="1" step="1" />
+
+      <label>Card Width (mm)</label>
+      <input type="number" id="cardWidth" value="180" step="1" />
+
+      <label>Left Margin (mm)</label>
+      <input type="number" id="marginLeft" value="15" step="1" />
+
+      <label>Top Margin (mm)</label>
+      <input type="number" id="marginTop" value="15" step="1" />
+
+      <label>Gap Between Cards (mm)</label>
+      <input type="number" id="cardGap" value="10" step="1" />
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary btn-large" id="downloadPdfBtn">Download A4 PDF</button>
+      <button class="btn btn-secondary btn-large" id="downloadSingleBtn">Download Single Card</button>
+    </div>
+  </div>
+
+  <!-- Single Card Preview -->
+  <div class="preview-area">
+    <div class="info-text">Single Card Preview</div>
+    <canvas id="cardCanvas"></canvas>
+  </div>
+
+  <!-- A4 Sheet Preview -->
+  <div class="preview-area">
+    <div class="info-text">A4 Layout Preview (Page 1)</div>
+    <canvas id="a4Canvas" width="420" height="594"></canvas>
+  </div>
+</div>
+
+<script>
+  const { jsPDF } = window.jspdf;
+
+  const canvas = document.getElementById('cardCanvas');
+  const ctx = canvas.getContext('2d');
+  const a4Canvas = document.getElementById('a4Canvas');
+  const a4Ctx = a4Canvas.getContext('2d');
+
+  let baseImage = new Image();
+
+  // --- Image Loading ---
+  document.getElementById('imageLoader').addEventListener('change', function(e){
+    const reader = new FileReader();
+    reader.onload = function(event){
+      baseImage.onload = function() {
+        canvas.width = baseImage.width;
+        canvas.height = baseImage.height;
+        updateCanvas();
+      }
+      baseImage.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);
+  });
+
+  // --- Drawing Logic ---
+  function updateCanvas() {
+    if (!baseImage.src) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(baseImage, 0, 0);
+
+    const data = {
+      name: document.getElementById('nameInput').value,
+      since: document.getElementById('sinceInput').value,
+      id: document.getElementById('idInput').value
+    };
+
+    const pos = {
+      nameX: parseFloat(document.getElementById('nameX').value),
+      nameY: parseFloat(document.getElementById('nameY').value),
+      sinceX: parseFloat(document.getElementById('sinceX').value),
+      sinceY: parseFloat(document.getElementById('sinceY').value),
+      idX: parseFloat(document.getElementById('idX').value),
+      idY: parseFloat(document.getElementById('idY').value)
+    };
+
+    const fontSize = canvas.width * 0.025;
+    ctx.font = `bold ${fontSize}px 'Times New Roman', serif`;
+    ctx.fillStyle = "#2e3e30";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+
+    ctx.fillText(data.name, pos.nameX, pos.nameY);
+    ctx.fillText(data.since, pos.sinceX, pos.sinceY);
+    ctx.fillText(data.id, pos.idX, pos.idY);
+
+    updateA4Preview();
+  }
+
+  function updateA4Preview() {
+    if (!baseImage.src) return;
+
+    a4Ctx.fillStyle = "#ffffff";
+    a4Ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
+
+    const layout = {
+      count: parseInt(document.getElementById('cardCount').value) || 1,
+      width: parseFloat(document.getElementById('cardWidth').value),
+      marginLeft: parseFloat(document.getElementById('marginLeft').value),
+      marginTop: parseFloat(document.getElementById('marginTop').value),
+      gap: parseFloat(document.getElementById('cardGap').value)
+    };
+
+    const aspectRatio = canvas.height / canvas.width;
+    const cardHeightMm = layout.width * aspectRatio;
+    const pxPerMm = 2;
+    const pageHeightPx = a4Canvas.height;
+
+    let currentYMm = layout.marginTop;
+
+    for (let i = 0; i < layout.count; i++) {
+      const xPos = layout.marginLeft * pxPerMm;
+      const yPos = currentYMm * pxPerMm;
+      const drawWidth = layout.width * pxPerMm;
+      const drawHeight = cardHeightMm * pxPerMm;
+
+      if (yPos + drawHeight > pageHeightPx) break;
+
+      a4Ctx.strokeStyle = "#ccc";
+      a4Ctx.lineWidth = 1;
+      a4Ctx.strokeRect(xPos - 1, yPos - 1, drawWidth + 2, drawHeight + 2);
+      a4Ctx.drawImage(canvas, xPos, yPos, drawWidth, drawHeight);
+
+      currentYMm += cardHeightMm + layout.gap;
+    }
+  }
+
+  // Attach Event Listeners to inputs for live update
+  const allInputs = document.querySelectorAll('input');
+  allInputs.forEach(input => {
+    if(input.id !== 'imageLoader' && input.id !== 'templateNameInput') {
+      input.addEventListener('input', updateCanvas);
+    }
+  });
+
+  // --- Local Storage Templates Logic ---
+  const STORAGE_KEY = 'chm_card_templates';
+
+  function getTemplates() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  }
+
+  function saveTemplatesData(templates) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
+  }
+
+  function updateTemplateDropdown() {
+    const select = document.getElementById('templateSelect');
+    const currentValue = select.value;
+    select.innerHTML = '<option value="">-- Select a template --</option>';
+
+    const templates = getTemplates();
+    for (const name in templates) {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    }
+
+    if (templates[currentValue]) {
+      select.value = currentValue;
+    }
+  }
+
+  // Save Template
+  document.getElementById('saveTemplateBtn').addEventListener('click', () => {
+    const name = document.getElementById('templateNameInput').value.trim();
+    if (!name) {
+      alert("Please enter a name for your template.");
+      return;
+    }
+
+    const settings = {
+      nameInput: document.getElementById('nameInput').value,
+      sinceInput: document.getElementById('sinceInput').value,
+      idInput: document.getElementById('idInput').value,
+      nameX: document.getElementById('nameX').value,
+      nameY: document.getElementById('nameY').value,
+      sinceX: document.getElementById('sinceX').value,
+      sinceY: document.getElementById('sinceY').value,
+      idX: document.getElementById('idX').value,
+      idY: document.getElementById('idY').value,
+      cardCount: document.getElementById('cardCount').value,
+      cardWidth: document.getElementById('cardWidth').value,
+      marginLeft: document.getElementById('marginLeft').value,
+      marginTop: document.getElementById('marginTop').value,
+      cardGap: document.getElementById('cardGap').value
+    };
+
+    const templates = getTemplates();
+    templates[name] = settings;
+    saveTemplatesData(templates);
+
+    updateTemplateDropdown();
+    document.getElementById('templateSelect').value = name;
+    document.getElementById('templateNameInput').value = '';
+    alert(`Template "${name}" saved successfully!`);
+  });
+
+  // Load Template
+  document.getElementById('loadTemplateBtn').addEventListener('click', () => {
+    const name = document.getElementById('templateSelect').value;
+    if (!name) {
+      alert("Please select a template to load.");
+      return;
+    }
+
+    const templates = getTemplates();
+    const settings = templates[name];
+
+    if (settings) {
+      Object.keys(settings).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) el.value = settings[key];
+      });
+      updateCanvas(); // Refresh visual
+    }
+  });
+
+  // Delete Template
+  document.getElementById('deleteTemplateBtn').addEventListener('click', () => {
+    const name = document.getElementById('templateSelect').value;
+    if (!name) {
+      alert("Please select a template to delete.");
+      return;
+    }
+
+    if (confirm(`Are you sure you want to delete the template "${name}"?`)) {
+      const templates = getTemplates();
+      delete templates[name];
+      saveTemplatesData(templates);
+      updateTemplateDropdown();
+      alert("Template deleted.");
+    }
+  });
+
+  // Init Dropdown on load
+  updateTemplateDropdown();
+
+  // --- Download Actions ---
+  document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+    if (!baseImage.src) {
+      alert("Please upload the card template first!");
+      return;
+    }
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const layout = {
+      count: parseInt(document.getElementById('cardCount').value) || 1,
+      width: parseFloat(document.getElementById('cardWidth').value),
+      marginLeft: parseFloat(document.getElementById('marginLeft').value),
+      marginTop: parseFloat(document.getElementById('marginTop').value),
+      gap: parseFloat(document.getElementById('cardGap').value)
+    };
+
+    const aspectRatio = canvas.height / canvas.width;
+    const cardHeightMm = layout.width * aspectRatio;
+    const cardImgData = canvas.toDataURL('image/png', 1.0);
+
+    let currentY = layout.marginTop;
+
+    for (let i = 0; i < layout.count; i++) {
+      if (currentY + cardHeightMm > pageHeight && currentY > layout.marginTop) {
+        pdf.addPage();
+        currentY = layout.marginTop;
+      }
+      pdf.addImage(cardImgData, 'PNG', layout.marginLeft, currentY, layout.width, cardHeightMm);
+      currentY += cardHeightMm + layout.gap;
+    }
+
+    pdf.save('CHM_Membership_Cards.pdf');
+  });
+
+  document.getElementById('downloadSingleBtn').addEventListener('click', () => {
+    if (!baseImage.src) {
+      alert("Please upload the card template first!");
+      return;
+    }
+    const link = document.createElement('a');
+    link.download = 'CHM_Single_Card.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+</script>
+
+</body>
+</html>
