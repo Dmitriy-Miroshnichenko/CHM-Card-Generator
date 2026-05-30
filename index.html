@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CHM Card Generator - Pro Layout & Templates</title>
-  <!-- Include jsPDF library for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
@@ -43,7 +42,6 @@
       overflow-y: auto;
       padding-right: 10px;
     }
-    /* Custom scrollbar for controls */
     .controls::-webkit-scrollbar {
       width: 6px;
     }
@@ -144,6 +142,21 @@
       height: auto;
       aspect-ratio: 1 / 1.414;
     }
+
+    /* ????? ??? ???????????? ?????? ?????????? */
+    .member-block {
+      background: #fff;
+      border: 1px solid #eee;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .member-block h4 {
+      margin: 0 0 5px 0;
+      font-size: 12px;
+      color: #2e3e30;
+    }
+
     @media (max-width: 1024px) {
       .container {
         grid-template-columns: 1fr;
@@ -162,7 +175,6 @@
     <p>Fill data, adjust layout, save templates, and export to A4 PDF</p>
   </div>
 
-  <!-- Controls Panel -->
   <div class="controls">
     <div class="control-group">
       <h3>1. Template File</h3>
@@ -188,17 +200,31 @@
     </div>
 
     <div class="control-group">
-      <h3>3. Member Information</h3>
-      <label>Member Name</label>
-      <input type="text" id="nameInput" placeholder="Enter Name" value="John Doe" />
-      <label>Member Since</label>
-      <input type="text" id="sinceInput" placeholder="Year" value="2026" />
-      <label>Member ID</label>
-      <input type="text" id="idInput" placeholder="ID Number" value="001" />
+      <h3>3. Layout & Count</h3>
+      <label>Number of Cards to Export</label>
+      <input type="number" id="cardCount" value="3" min="1" step="1" />
+
+      <label>Card Width (mm)</label>
+      <input type="number" id="cardWidth" value="180" step="1" />
+
+      <label>Left Margin (mm)</label>
+      <input type="number" id="marginLeft" value="15" step="1" />
+
+      <label>Top Margin (mm)</label>
+      <input type="number" id="marginTop" value="15" step="1" />
+
+      <label>Gap Between Cards (mm)</label>
+      <input type="number" id="cardGap" value="10" step="1" />
     </div>
 
     <div class="control-group">
-      <h3>4. Text Positioning (X / Y)</h3>
+      <h3>4. Member Information</h3>
+      <div id="membersContainer">
+      </div>
+    </div>
+
+    <div class="control-group">
+      <h3>5. Text Positioning (X / Y)</h3>
       <label>Name Position</label>
       <div class="pos-inputs">
         <input type="number" id="nameX" value="340" step="1" title="X Position" />
@@ -216,37 +242,17 @@
       </div>
     </div>
 
-    <div class="control-group">
-      <h3>5. A4 Layout Settings (mm)</h3>
-      <label>Number of Cards to Export</label>
-      <input type="number" id="cardCount" value="3" min="1" step="1" />
-
-      <label>Card Width (mm)</label>
-      <input type="number" id="cardWidth" value="180" step="1" />
-
-      <label>Left Margin (mm)</label>
-      <input type="number" id="marginLeft" value="15" step="1" />
-
-      <label>Top Margin (mm)</label>
-      <input type="number" id="marginTop" value="15" step="1" />
-
-      <label>Gap Between Cards (mm)</label>
-      <input type="number" id="cardGap" value="10" step="1" />
-    </div>
-
     <div class="action-buttons">
       <button class="btn btn-primary btn-large" id="downloadPdfBtn">Download A4 PDF</button>
-      <button class="btn btn-secondary btn-large" id="downloadSingleBtn">Download Single Card</button>
+      <button class="btn btn-secondary btn-large" id="downloadSingleBtn">Download First Card</button>
     </div>
   </div>
 
-  <!-- Single Card Preview -->
   <div class="preview-area">
-    <div class="info-text">Single Card Preview</div>
+    <div class="info-text">Card 1 Preview</div>
     <canvas id="cardCanvas"></canvas>
   </div>
 
-  <!-- A4 Sheet Preview -->
   <div class="preview-area">
     <div class="info-text">A4 Layout Preview (Page 1)</div>
     <canvas id="a4Canvas" width="420" height="594"></canvas>
@@ -263,6 +269,64 @@
 
   let baseImage = new Image();
 
+  // --- Dynamic Member Inputs ---
+  function getMembersData() {
+    const names = document.querySelectorAll('.dyn-name');
+    const sinces = document.querySelectorAll('.dyn-since');
+    const ids = document.querySelectorAll('.dyn-id');
+    const data = [];
+    for(let i = 0; i < names.length; i++) {
+      data.push({
+        name: names[i].value,
+        since: sinces[i].value,
+        id: ids[i].value
+      });
+    }
+    return data;
+  }
+
+  function generateInputFields(forceData = null) {
+    const count = parseInt(document.getElementById('cardCount').value) || 1;
+    const container = document.getElementById('membersContainer');
+
+    // ????????? ??????? ??????, ????? ?? ??????? ?? ??? ????????? ??????????
+    const existingData = forceData || getMembersData();
+    container.innerHTML = '';
+
+    for (let i = 0; i < count; i++) {
+      // ???????? ?? ?????????, ???? ?????? ??? ???? ???????? ??? ???
+      const prev = existingData[i] || { name: `John Doe ${i+1}`, since: '2026', id: `00${i+1}` };
+
+      const div = document.createElement('div');
+      div.className = 'member-block';
+      div.innerHTML = `
+        <h4>Card ${i + 1}</h4>
+        <label>Member Name</label>
+        <input type="text" class="dyn-name" placeholder="Enter Name" value="${prev.name}" />
+        <div class="pos-inputs">
+          <div>
+            <label>Member Since</label>
+            <input type="text" class="dyn-since" placeholder="Year" value="${prev.since}" />
+          </div>
+          <div>
+            <label>Member ID</label>
+            <input type="text" class="dyn-id" placeholder="ID" value="${prev.id}" />
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    // ??????????? ??????? ??? ?????????? Canvas ??? ????? ??????
+    container.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', updateCanvas);
+    });
+
+    updateCanvas();
+  }
+
+  document.getElementById('cardCount').addEventListener('input', () => generateInputFields());
+
   // --- Image Loading ---
   document.getElementById('imageLoader').addEventListener('change', function(e){
     const reader = new FileReader();
@@ -278,19 +342,23 @@
   });
 
   // --- Drawing Logic ---
-  function updateCanvas() {
-    if (!baseImage.src) return;
+  function drawSingleCardData(context, data, pos) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(baseImage, 0, 0);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(baseImage, 0, 0);
+    const fontSize = canvas.width * 0.025;
+    context.font = `bold ${fontSize}px 'Times New Roman', serif`;
+    context.fillStyle = "#2e3e30";
+    context.textAlign = "left";
+    context.textBaseline = "bottom";
 
-    const data = {
-      name: document.getElementById('nameInput').value,
-      since: document.getElementById('sinceInput').value,
-      id: document.getElementById('idInput').value
-    };
+    context.fillText(data.name, pos.nameX, pos.nameY);
+    context.fillText(data.since, pos.sinceX, pos.sinceY);
+    context.fillText(data.id, pos.idX, pos.idY);
+  }
 
-    const pos = {
+  function getPositions() {
+    return {
       nameX: parseFloat(document.getElementById('nameX').value),
       nameY: parseFloat(document.getElementById('nameY').value),
       sinceX: parseFloat(document.getElementById('sinceX').value),
@@ -298,68 +366,80 @@
       idX: parseFloat(document.getElementById('idX').value),
       idY: parseFloat(document.getElementById('idY').value)
     };
-
-    const fontSize = canvas.width * 0.025;
-    ctx.font = `bold ${fontSize}px 'Times New Roman', serif`;
-    ctx.fillStyle = "#2e3e30";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "bottom";
-
-    ctx.fillText(data.name, pos.nameX, pos.nameY);
-    ctx.fillText(data.since, pos.sinceX, pos.sinceY);
-    ctx.fillText(data.id, pos.idX, pos.idY);
-
-    updateA4Preview();
   }
 
-  function updateA4Preview() {
-    if (!baseImage.src) return;
-
-    a4Ctx.fillStyle = "#ffffff";
-    a4Ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
-
-    const layout = {
+  function getLayout() {
+    return {
       count: parseInt(document.getElementById('cardCount').value) || 1,
       width: parseFloat(document.getElementById('cardWidth').value),
       marginLeft: parseFloat(document.getElementById('marginLeft').value),
       marginTop: parseFloat(document.getElementById('marginTop').value),
       gap: parseFloat(document.getElementById('cardGap').value)
     };
+  }
 
+  function updateCanvas() {
+    if (!baseImage.src) return;
+
+    const members = getMembersData();
+    if (members.length === 0) return;
+    const pos = getPositions();
+
+    // ???????????? ?????? ??? ??????? A4
+    updateA4Preview(members, pos);
+
+    // ?????????? ??????? ????? (Card 1 Preview) ? ????????? ?????? ????????
+    drawSingleCardData(ctx, members[0], pos);
+  }
+
+  function updateA4Preview(members, pos) {
+    a4Ctx.fillStyle = "#ffffff";
+    a4Ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
+
+    const layout = getLayout();
     const aspectRatio = canvas.height / canvas.width;
     const cardHeightMm = layout.width * aspectRatio;
-    const pxPerMm = 2;
+    const pxPerMm = 2; // ??????????????? ??? ??????
     const pageHeightPx = a4Canvas.height;
 
     let currentYMm = layout.marginTop;
 
     for (let i = 0; i < layout.count; i++) {
+      if (!members[i]) break; // ?????? ?? ??????
+
+      // ???????? ???????????? ???????? ??????????? ????????? ?? ??????? Canvas
+      drawSingleCardData(ctx, members[i], pos);
+
       const xPos = layout.marginLeft * pxPerMm;
       const yPos = currentYMm * pxPerMm;
       const drawWidth = layout.width * pxPerMm;
       const drawHeight = cardHeightMm * pxPerMm;
 
-      if (yPos + drawHeight > pageHeightPx) break;
+      if (yPos + drawHeight > pageHeightPx) break; // ?????????? ?????? ?????? ???????? ?? ??????
 
       a4Ctx.strokeStyle = "#ccc";
       a4Ctx.lineWidth = 1;
       a4Ctx.strokeRect(xPos - 1, yPos - 1, drawWidth + 2, drawHeight + 2);
+      // ?????? ?? A4 ????? ?????? ??? ????????? ????????
       a4Ctx.drawImage(canvas, xPos, yPos, drawWidth, drawHeight);
 
       currentYMm += cardHeightMm + layout.gap;
     }
   }
 
-  // Attach Event Listeners to inputs for live update
-  const allInputs = document.querySelectorAll('input');
-  allInputs.forEach(input => {
-    if(input.id !== 'imageLoader' && input.id !== 'templateNameInput') {
+  // ???????? ??????? ? ????????? ??????? (????? ???????????? ? ????????)
+  const staticInputs = document.querySelectorAll('.controls > .control-group:not(:nth-child(4)) input');
+  staticInputs.forEach(input => {
+    if(input.id !== 'imageLoader' && input.id !== 'templateNameInput' && input.id !== 'cardCount') {
       input.addEventListener('input', updateCanvas);
     }
   });
 
+  // ????????????? ??? ?????? ????????
+  generateInputFields();
+
   // --- Local Storage Templates Logic ---
-  const STORAGE_KEY = 'chm_card_templates';
+  const STORAGE_KEY = 'chm_card_templates_v2';
 
   function getTemplates() {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -396,9 +476,7 @@
     }
 
     const settings = {
-      nameInput: document.getElementById('nameInput').value,
-      sinceInput: document.getElementById('sinceInput').value,
-      idInput: document.getElementById('idInput').value,
+      membersData: getMembersData(),
       nameX: document.getElementById('nameX').value,
       nameY: document.getElementById('nameY').value,
       sinceX: document.getElementById('sinceX').value,
@@ -434,11 +512,19 @@
     const settings = templates[name];
 
     if (settings) {
-      Object.keys(settings).forEach(key => {
+      // ??????????????? ??????????? ?????????
+      const staticKeys = ['nameX', 'nameY', 'sinceX', 'sinceY', 'idX', 'idY', 'cardCount', 'cardWidth', 'marginLeft', 'marginTop', 'cardGap'];
+      staticKeys.forEach(key => {
         const el = document.getElementById(key);
-        if (el) el.value = settings[key];
+        if (el && settings[key] !== undefined) el.value = settings[key];
       });
-      updateCanvas(); // Refresh visual
+
+      // ??????????????? ?????? ??????????
+      if (settings.membersData) {
+        generateInputFields(settings.membersData);
+      }
+
+      updateCanvas();
     }
   });
 
@@ -459,7 +545,6 @@
     }
   });
 
-  // Init Dropdown on load
   updateTemplateDropdown();
 
   // --- Download Actions ---
@@ -472,28 +557,33 @@
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageHeight = pdf.internal.pageSize.getHeight();
 
-    const layout = {
-      count: parseInt(document.getElementById('cardCount').value) || 1,
-      width: parseFloat(document.getElementById('cardWidth').value),
-      marginLeft: parseFloat(document.getElementById('marginLeft').value),
-      marginTop: parseFloat(document.getElementById('marginTop').value),
-      gap: parseFloat(document.getElementById('cardGap').value)
-    };
+    const layout = getLayout();
+    const members = getMembersData();
+    const pos = getPositions();
 
     const aspectRatio = canvas.height / canvas.width;
     const cardHeightMm = layout.width * aspectRatio;
-    const cardImgData = canvas.toDataURL('image/png', 1.0);
 
     let currentY = layout.marginTop;
 
     for (let i = 0; i < layout.count; i++) {
+      if (!members[i]) break;
+
       if (currentY + cardHeightMm > pageHeight && currentY > layout.marginTop) {
         pdf.addPage();
         currentY = layout.marginTop;
       }
+
+      // ???????????? ?????????? ????????
+      drawSingleCardData(ctx, members[i], pos);
+      const cardImgData = canvas.toDataURL('image/png', 1.0);
+
       pdf.addImage(cardImgData, 'PNG', layout.marginLeft, currentY, layout.width, cardHeightMm);
       currentY += cardHeightMm + layout.gap;
     }
+
+    // ?????????? ?????? ???????? ?? ??????
+    drawSingleCardData(ctx, members[0], pos);
 
     pdf.save('CHM_Membership_Cards.pdf');
   });
