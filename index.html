@@ -76,6 +76,24 @@
       border-radius: 4px;
       font-family: inherit;
     }
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #2e3e30;
+      cursor: pointer;
+    }
+    input:disabled {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
     .pos-inputs {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -143,7 +161,6 @@
       aspect-ratio: 1 / 1.414;
     }
 
-    /* ????? ??? ???????????? ?????? ?????????? */
     .member-block {
       background: #fff;
       border: 1px solid #eee;
@@ -205,16 +222,21 @@
       <input type="number" id="cardCount" value="3" min="1" step="1" />
 
       <label>Card Width (mm)</label>
-      <input type="number" id="cardWidth" value="180" step="1" />
+      <input type="number" id="cardWidth" value="153" step="1" />
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="centerHorizontally" checked />
+        Center Cards Horizontally
+      </label>
 
       <label>Left Margin (mm)</label>
-      <input type="number" id="marginLeft" value="15" step="1" />
+      <input type="number" id="marginLeft" value="0" step="1" disabled />
 
       <label>Top Margin (mm)</label>
-      <input type="number" id="marginTop" value="15" step="1" />
+      <input type="number" id="marginTop" value="0" step="1" />
 
       <label>Gap Between Cards (mm)</label>
-      <input type="number" id="cardGap" value="10" step="1" />
+      <input type="number" id="cardGap" value="3" step="1" />
     </div>
 
     <div class="control-group">
@@ -227,18 +249,18 @@
       <h3>5. Text Positioning (X / Y)</h3>
       <label>Name Position</label>
       <div class="pos-inputs">
-        <input type="number" id="nameX" value="340" step="1" title="X Position" />
-        <input type="number" id="nameY" value="745" step="1" title="Y Position" />
+        <input type="number" id="nameX" value="620" step="1" title="X Position" />
+        <input type="number" id="nameY" value="845" step="1" title="Y Position" />
       </div>
       <label>Since Position</label>
       <div class="pos-inputs">
-        <input type="number" id="sinceX" value="340" step="1" title="X Position" />
-        <input type="number" id="sinceY" value="840" step="1" title="Y Position" />
+        <input type="number" id="sinceX" value="620" step="1" title="X Position" />
+        <input type="number" id="sinceY" value="950" step="1" title="Y Position" />
       </div>
       <label>ID Position</label>
       <div class="pos-inputs">
-        <input type="number" id="idX" value="650" step="1" title="X Position" />
-        <input type="number" id="idY" value="840" step="1" title="Y Position" />
+        <input type="number" id="idX" value="1180" step="1" title="X Position" />
+        <input type="number" id="idY" value="950" step="1" title="Y Position" />
       </div>
     </div>
 
@@ -262,12 +284,16 @@
 <script>
   const { jsPDF } = window.jspdf;
 
+  // ??????? ????? ??? ?????? ????????
   const canvas = document.getElementById('cardCanvas');
   const ctx = canvas.getContext('2d');
+
+  // ????? ??? ?????? ??????? ?4
   const a4Canvas = document.getElementById('a4Canvas');
   const a4Ctx = a4Canvas.getContext('2d');
 
   let baseImage = new Image();
+  const A4_WIDTH_MM = 210;
 
   // --- Dynamic Member Inputs ---
   function getMembersData() {
@@ -289,12 +315,10 @@
     const count = parseInt(document.getElementById('cardCount').value) || 1;
     const container = document.getElementById('membersContainer');
 
-    // ????????? ??????? ??????, ????? ?? ??????? ?? ??? ????????? ??????????
     const existingData = forceData || getMembersData();
     container.innerHTML = '';
 
     for (let i = 0; i < count; i++) {
-      // ???????? ?? ?????????, ???? ?????? ??? ???? ???????? ??? ???
       const prev = existingData[i] || { name: `John Doe ${i+1}`, since: '2026', id: `00${i+1}` };
 
       const div = document.createElement('div');
@@ -317,7 +341,6 @@
       container.appendChild(div);
     }
 
-    // ??????????? ??????? ??? ?????????? Canvas ??? ????? ??????
     container.querySelectorAll('input').forEach(input => {
       input.addEventListener('input', updateCanvas);
     });
@@ -341,12 +364,22 @@
     reader.readAsDataURL(e.target.files[0]);
   });
 
-  // --- Drawing Logic ---
-  function drawSingleCardData(context, data, pos) {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(baseImage, 0, 0);
+  // --- Checkbox Logic ---
+  const centerCheckbox = document.getElementById('centerHorizontally');
+  const marginLeftInput = document.getElementById('marginLeft');
 
-    const fontSize = canvas.width * 0.025;
+  centerCheckbox.addEventListener('change', function() {
+    marginLeftInput.disabled = this.checked;
+    updateCanvas();
+  });
+
+  // --- Drawing Logic ---
+  // ???????? ???????? targetCanvas, ????? ???????? ???? ?? ??????? ??????, ???? ? ??????? ??????
+  function drawSingleCardData(context, targetCanvas, data, pos) {
+    context.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+    context.drawImage(baseImage, 0, 0, targetCanvas.width, targetCanvas.height);
+
+    const fontSize = targetCanvas.width * 0.025;
     context.font = `bold ${fontSize}px 'Times New Roman', serif`;
     context.fillStyle = "#2e3e30";
     context.textAlign = "left";
@@ -374,7 +407,8 @@
       width: parseFloat(document.getElementById('cardWidth').value),
       marginLeft: parseFloat(document.getElementById('marginLeft').value),
       marginTop: parseFloat(document.getElementById('marginTop').value),
-      gap: parseFloat(document.getElementById('cardGap').value)
+      gap: parseFloat(document.getElementById('cardGap').value),
+      centerHorizontally: document.getElementById('centerHorizontally').checked
     };
   }
 
@@ -385,11 +419,11 @@
     if (members.length === 0) return;
     const pos = getPositions();
 
-    // ???????????? ?????? ??? ??????? A4
-    updateA4Preview(members, pos);
+    // 1. ?????? ?????? ?????? ???????? ?? ??????? ?????? (?????? ????????)
+    drawSingleCardData(ctx, canvas, members[0], pos);
 
-    // ?????????? ??????? ????? (Card 1 Preview) ? ????????? ?????? ????????
-    drawSingleCardData(ctx, members[0], pos);
+    // 2. ????????? ?????? ?4
+    updateA4Preview(members, pos);
   }
 
   function updateA4Preview(members, pos) {
@@ -399,47 +433,56 @@
     const layout = getLayout();
     const aspectRatio = canvas.height / canvas.width;
     const cardHeightMm = layout.width * aspectRatio;
-    const pxPerMm = 2; // ??????????????? ??? ??????
+    const pxPerMm = 2;
     const pageHeightPx = a4Canvas.height;
+
+    const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
+
+    // ??????? ????????? ????? ??? ??????? ????????? ????????,
+    // ????? ??? ?? ???????? ? ??????? Card 1 Preview
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = canvas.width;
+    offscreenCanvas.height = canvas.height;
+    const offCtx = offscreenCanvas.getContext('2d');
 
     let currentYMm = layout.marginTop;
 
     for (let i = 0; i < layout.count; i++) {
-      if (!members[i]) break; // ?????? ?? ??????
+      if (!members[i]) break;
 
-      // ???????? ???????????? ???????? ??????????? ????????? ?? ??????? Canvas
-      drawSingleCardData(ctx, members[i], pos);
+      // ?????? ?? ??????? ??????
+      drawSingleCardData(offCtx, offscreenCanvas, members[i], pos);
 
-      const xPos = layout.marginLeft * pxPerMm;
+      const xPos = effectiveMarginLeft * pxPerMm;
       const yPos = currentYMm * pxPerMm;
       const drawWidth = layout.width * pxPerMm;
       const drawHeight = cardHeightMm * pxPerMm;
 
-      if (yPos + drawHeight > pageHeightPx) break; // ?????????? ?????? ?????? ???????? ?? ??????
+      if (yPos + drawHeight > pageHeightPx) break;
 
       a4Ctx.strokeStyle = "#ccc";
       a4Ctx.lineWidth = 1;
       a4Ctx.strokeRect(xPos - 1, yPos - 1, drawWidth + 2, drawHeight + 2);
-      // ?????? ?? A4 ????? ?????? ??? ????????? ????????
-      a4Ctx.drawImage(canvas, xPos, yPos, drawWidth, drawHeight);
+
+      // ???????? ??????? ???????? ?? ???????? ?????? ?? ?????? ?4
+      a4Ctx.drawImage(offscreenCanvas, xPos, yPos, drawWidth, drawHeight);
 
       currentYMm += cardHeightMm + layout.gap;
     }
   }
 
-  // ???????? ??????? ? ????????? ??????? (????? ???????????? ? ????????)
+  // ???????? ??????? ? ???????
   const staticInputs = document.querySelectorAll('.controls > .control-group:not(:nth-child(4)) input');
   staticInputs.forEach(input => {
-    if(input.id !== 'imageLoader' && input.id !== 'templateNameInput' && input.id !== 'cardCount') {
+    if(input.id !== 'imageLoader' && input.id !== 'templateNameInput' && input.id !== 'cardCount' && input.id !== 'centerHorizontally') {
       input.addEventListener('input', updateCanvas);
     }
   });
 
-  // ????????????? ??? ?????? ????????
   generateInputFields();
 
   // --- Local Storage Templates Logic ---
-  const STORAGE_KEY = 'chm_card_templates_v2';
+  const STORAGE_KEY = 'chm_card_templates_v4';
 
   function getTemplates() {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -467,7 +510,6 @@
     }
   }
 
-  // Save Template
   document.getElementById('saveTemplateBtn').addEventListener('click', () => {
     const name = document.getElementById('templateNameInput').value.trim();
     if (!name) {
@@ -487,7 +529,8 @@
       cardWidth: document.getElementById('cardWidth').value,
       marginLeft: document.getElementById('marginLeft').value,
       marginTop: document.getElementById('marginTop').value,
-      cardGap: document.getElementById('cardGap').value
+      cardGap: document.getElementById('cardGap').value,
+      centerHorizontally: document.getElementById('centerHorizontally').checked
     };
 
     const templates = getTemplates();
@@ -500,7 +543,6 @@
     alert(`Template "${name}" saved successfully!`);
   });
 
-  // Load Template
   document.getElementById('loadTemplateBtn').addEventListener('click', () => {
     const name = document.getElementById('templateSelect').value;
     if (!name) {
@@ -512,14 +554,17 @@
     const settings = templates[name];
 
     if (settings) {
-      // ??????????????? ??????????? ?????????
+      if (settings.centerHorizontally !== undefined) {
+        centerCheckbox.checked = settings.centerHorizontally;
+        centerCheckbox.dispatchEvent(new Event('change'));
+      }
+
       const staticKeys = ['nameX', 'nameY', 'sinceX', 'sinceY', 'idX', 'idY', 'cardCount', 'cardWidth', 'marginLeft', 'marginTop', 'cardGap'];
       staticKeys.forEach(key => {
         const el = document.getElementById(key);
         if (el && settings[key] !== undefined) el.value = settings[key];
       });
 
-      // ??????????????? ?????? ??????????
       if (settings.membersData) {
         generateInputFields(settings.membersData);
       }
@@ -528,7 +573,6 @@
     }
   });
 
-  // Delete Template
   document.getElementById('deleteTemplateBtn').addEventListener('click', () => {
     const name = document.getElementById('templateSelect').value;
     if (!name) {
@@ -563,6 +607,13 @@
 
     const aspectRatio = canvas.height / canvas.width;
     const cardHeightMm = layout.width * aspectRatio;
+    const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
+
+    // ??????? ????????? ????? ??? ??????? ???????? ? PDF
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = canvas.width;
+    offscreenCanvas.height = canvas.height;
+    const offCtx = offscreenCanvas.getContext('2d');
 
     let currentY = layout.marginTop;
 
@@ -574,16 +625,12 @@
         currentY = layout.marginTop;
       }
 
-      // ???????????? ?????????? ????????
-      drawSingleCardData(ctx, members[i], pos);
-      const cardImgData = canvas.toDataURL('image/png', 1.0);
+      drawSingleCardData(offCtx, offscreenCanvas, members[i], pos);
+      const cardImgData = offscreenCanvas.toDataURL('image/png', 1.0);
 
-      pdf.addImage(cardImgData, 'PNG', layout.marginLeft, currentY, layout.width, cardHeightMm);
+      pdf.addImage(cardImgData, 'PNG', effectiveMarginLeft, currentY, layout.width, cardHeightMm);
       currentY += cardHeightMm + layout.gap;
     }
-
-    // ?????????? ?????? ???????? ?? ??????
-    drawSingleCardData(ctx, members[0], pos);
 
     pdf.save('CHM_Membership_Cards.pdf');
   });
