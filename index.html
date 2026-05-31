@@ -23,7 +23,7 @@
       max-width: 1300px;
       width: 100%;
       display: grid;
-      grid-template-columns: 350px 1fr 1fr;
+      grid-template-columns: 400px 1fr 1fr; /* Widened left column slightly for new inputs */
       gap: 20px;
     }
     .header {
@@ -99,6 +99,13 @@
       grid-template-columns: 1fr 1fr;
       gap: 5px;
     }
+    /* New grid for X, Y, Size, and Font inputs */
+    .format-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1.5fr;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
     .action-buttons {
       display: flex;
       flex-direction: column;
@@ -173,6 +180,13 @@
       font-size: 12px;
       color: #2e3e30;
     }
+    /* Mini-labels for the tight inputs array */
+    .mini-label {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 2px;
+      display: block;
+    }
 
     @media (max-width: 1024px) {
       .container {
@@ -189,7 +203,7 @@
 <div class="container">
   <div class="header">
     <h1>CHM Membership Card Creator</h1>
-    <p>Fill data, adjust layout, save templates, and export to A4 PDF</p>
+    <p>Fill data, adjust layout, format text, save templates, and export to A4 PDF</p>
   </div>
 
   <div class="controls">
@@ -246,21 +260,137 @@
     </div>
 
     <div class="control-group">
-      <h3>5. Text Positioning (X / Y)</h3>
-      <label>Name Position</label>
-      <div class="pos-inputs">
-        <input type="number" id="nameX" value="620" step="1" title="X Position" />
-        <input type="number" id="nameY" value="845" step="1" title="Y Position" />
+      <h3>5. Text Formatting & Positioning</h3>
+
+      <label>Name Field</label>
+      <div class="format-inputs">
+        <div><span class="mini-label">X Pos</span><input type="number" id="nameX" value="620" step="1" /></div>
+        <div><span class="mini-label">Y Pos</span><input type="number" id="nameY" value="845" step="1" /></div>
+        <div><span class="mini-label">Size (px)</span><input type="number" id="nameSize" value="50" step="1" /></div>
+        <div>
+          <span class="mini-label">Font Family</span>
+          <select id="nameFont">
+            <optgroup label="(Sans-Serif)">
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Helvetica, sans-serif">Helvetica</option>
+              <option value="Verdana, sans-serif">Verdana</option>
+              <option value="Tahoma, sans-serif">Tahoma</option>
+              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+              <option value="'Arial Black', sans-serif">Arial Black</option>
+              <option value="'Century Gothic', sans-serif">Century Gothic</option>
+            </optgroup>
+
+            <optgroup label="(Serif)">
+              <option value="'Times New Roman', serif" selected>Times New Roman</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Garamond, serif">Garamond</option>
+              <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino / Book Antiqua</option>
+            </optgroup>
+
+            <optgroup label="(Monospace)">
+              <option value="'Courier New', Courier, monospace">Courier New</option>
+              <option value="Consolas, monospace">Consolas</option>
+              <option value="Monaco, monospace">Monaco</option>
+              <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
+            </optgroup>
+
+            <optgroup label="(Display)">
+              <option value="Impact, Charcoal, sans-serif">Impact</option>
+              <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+              <option value="'Brush Script MT', cursive">Brush Script MT</option>
+              <option value="Copperplate, 'Copperplate Gothic Light', fantasy">Copperplate</option>
+              <option value="Papyrus, fantasy">Papyrus</option>
+            </optgroup>
+          </select>
+        </div>
       </div>
-      <label>Since Position</label>
-      <div class="pos-inputs">
-        <input type="number" id="sinceX" value="620" step="1" title="X Position" />
-        <input type="number" id="sinceY" value="950" step="1" title="Y Position" />
+
+      <label>Since Field</label>
+      <div class="format-inputs">
+        <div><span class="mini-label">X Pos</span><input type="number" id="sinceX" value="620" step="1" /></div>
+        <div><span class="mini-label">Y Pos</span><input type="number" id="sinceY" value="950" step="1" /></div>
+        <div><span class="mini-label">Size (px)</span><input type="number" id="sinceSize" value="50" step="1" /></div>
+        <div>
+          <span class="mini-label">Font Family</span>
+          <select id="sinceFont">
+
+            <optgroup label="(Sans-Serif)">
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Helvetica, sans-serif">Helvetica</option>
+              <option value="Verdana, sans-serif">Verdana</option>
+              <option value="Tahoma, sans-serif">Tahoma</option>
+              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+              <option value="'Arial Black', sans-serif">Arial Black</option>
+              <option value="'Century Gothic', sans-serif">Century Gothic</option>
+            </optgroup>
+
+            <optgroup label="(Serif)">
+              <option value="'Times New Roman', serif" selected>Times New Roman</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Garamond, serif">Garamond</option>
+              <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino / Book Antiqua</option>
+            </optgroup>
+
+            <optgroup label="(Monospace)">
+              <option value="'Courier New', Courier, monospace">Courier New</option>
+              <option value="Consolas, monospace">Consolas</option>
+              <option value="Monaco, monospace">Monaco</option>
+              <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
+            </optgroup>
+
+            <optgroup label="(Display)">
+              <option value="Impact, Charcoal, sans-serif">Impact</option>
+              <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+              <option value="'Brush Script MT', cursive">Brush Script MT</option>
+              <option value="Copperplate, 'Copperplate Gothic Light', fantasy">Copperplate</option>
+              <option value="Papyrus, fantasy">Papyrus</option>
+            </optgroup>
+          </select>
+        </div>
       </div>
-      <label>ID Position</label>
-      <div class="pos-inputs">
-        <input type="number" id="idX" value="1180" step="1" title="X Position" />
-        <input type="number" id="idY" value="950" step="1" title="Y Position" />
+
+      <label>ID Field</label>
+      <div class="format-inputs">
+        <div><span class="mini-label">X Pos</span><input type="number" id="idX" value="1180" step="1" /></div>
+        <div><span class="mini-label">Y Pos</span><input type="number" id="idY" value="950" step="1" /></div>
+        <div><span class="mini-label">Size (px)</span><input type="number" id="idSize" value="50" step="1" /></div>
+        <div>
+          <span class="mini-label">Font Family</span>
+          <select id="idFont">
+
+            <optgroup label="(Sans-Serif)">
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Helvetica, sans-serif">Helvetica</option>
+              <option value="Verdana, sans-serif">Verdana</option>
+              <option value="Tahoma, sans-serif">Tahoma</option>
+              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+              <option value="'Arial Black', sans-serif">Arial Black</option>
+              <option value="'Century Gothic', sans-serif">Century Gothic</option>
+            </optgroup>
+
+            <optgroup label="(Serif)">
+              <option value="'Times New Roman', serif" selected>Times New Roman</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Garamond, serif">Garamond</option>
+              <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino / Book Antiqua</option>
+            </optgroup>
+
+            <optgroup label="(Monospace)">
+              <option value="'Courier New', Courier, monospace">Courier New</option>
+              <option value="Consolas, monospace">Consolas</option>
+              <option value="Monaco, monospace">Monaco</option>
+              <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
+            </optgroup>
+
+            <optgroup label="(Display)">
+              <option value="Impact, Charcoal, sans-serif">Impact</option>
+              <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+              <option value="'Brush Script MT', cursive">Brush Script MT</option>
+              <option value="Copperplate, 'Copperplate Gothic Light', fantasy">Copperplate</option>
+              <option value="Papyrus, fantasy">Papyrus</option>
+            </optgroup>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -284,11 +414,9 @@
 <script>
   const { jsPDF } = window.jspdf;
 
-  // ??????? ????? ??? ?????? ????????
   const canvas = document.getElementById('cardCanvas');
   const ctx = canvas.getContext('2d');
 
-  // ????? ??? ?????? ??????? ?4
   const a4Canvas = document.getElementById('a4Canvas');
   const a4Ctx = a4Canvas.getContext('2d');
 
@@ -374,30 +502,47 @@
   });
 
   // --- Drawing Logic ---
-  // ???????? ???????? targetCanvas, ????? ???????? ???? ?? ??????? ??????, ???? ? ??????? ??????
-  function drawSingleCardData(context, targetCanvas, data, pos) {
+  function drawSingleCardData(context, targetCanvas, data, fmt) {
     context.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
     context.drawImage(baseImage, 0, 0, targetCanvas.width, targetCanvas.height);
 
-    const fontSize = targetCanvas.width * 0.025;
-    context.font = `bold ${fontSize}px 'Times New Roman', serif`;
     context.fillStyle = "#2e3e30";
     context.textAlign = "left";
     context.textBaseline = "bottom";
 
-    context.fillText(data.name, pos.nameX, pos.nameY);
-    context.fillText(data.since, pos.sinceX, pos.sinceY);
-    context.fillText(data.id, pos.idX, pos.idY);
+    // Draw Name
+    context.font = `bold ${fmt.name.size}px ${fmt.name.font}`;
+    context.fillText(data.name, fmt.name.x, fmt.name.y);
+
+    // Draw Since
+    context.font = `bold ${fmt.since.size}px ${fmt.since.font}`;
+    context.fillText(data.since, fmt.since.x, fmt.since.y);
+
+    // Draw ID
+    context.font = `bold ${fmt.id.size}px ${fmt.id.font}`;
+    context.fillText(data.id, fmt.id.x, fmt.id.y);
   }
 
-  function getPositions() {
+  function getFormatting() {
     return {
-      nameX: parseFloat(document.getElementById('nameX').value),
-      nameY: parseFloat(document.getElementById('nameY').value),
-      sinceX: parseFloat(document.getElementById('sinceX').value),
-      sinceY: parseFloat(document.getElementById('sinceY').value),
-      idX: parseFloat(document.getElementById('idX').value),
-      idY: parseFloat(document.getElementById('idY').value)
+      name: {
+        x: parseFloat(document.getElementById('nameX').value),
+        y: parseFloat(document.getElementById('nameY').value),
+        size: parseFloat(document.getElementById('nameSize').value),
+        font: document.getElementById('nameFont').value
+      },
+      since: {
+        x: parseFloat(document.getElementById('sinceX').value),
+        y: parseFloat(document.getElementById('sinceY').value),
+        size: parseFloat(document.getElementById('sinceSize').value),
+        font: document.getElementById('sinceFont').value
+      },
+      id: {
+        x: parseFloat(document.getElementById('idX').value),
+        y: parseFloat(document.getElementById('idY').value),
+        size: parseFloat(document.getElementById('idSize').value),
+        font: document.getElementById('idFont').value
+      }
     };
   }
 
@@ -417,16 +562,13 @@
 
     const members = getMembersData();
     if (members.length === 0) return;
-    const pos = getPositions();
+    const fmt = getFormatting();
 
-    // 1. ?????? ?????? ?????? ???????? ?? ??????? ?????? (?????? ????????)
-    drawSingleCardData(ctx, canvas, members[0], pos);
-
-    // 2. ????????? ?????? ?4
-    updateA4Preview(members, pos);
+    drawSingleCardData(ctx, canvas, members[0], fmt);
+    updateA4Preview(members, fmt);
   }
 
-  function updateA4Preview(members, pos) {
+  function updateA4Preview(members, fmt) {
     a4Ctx.fillStyle = "#ffffff";
     a4Ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
 
@@ -438,8 +580,6 @@
 
     const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
 
-    // ??????? ????????? ????? ??? ??????? ????????? ????????,
-    // ????? ??? ?? ???????? ? ??????? Card 1 Preview
     const offscreenCanvas = document.createElement('canvas');
     offscreenCanvas.width = canvas.width;
     offscreenCanvas.height = canvas.height;
@@ -450,8 +590,7 @@
     for (let i = 0; i < layout.count; i++) {
       if (!members[i]) break;
 
-      // ?????? ?? ??????? ??????
-      drawSingleCardData(offCtx, offscreenCanvas, members[i], pos);
+      drawSingleCardData(offCtx, offscreenCanvas, members[i], fmt);
 
       const xPos = effectiveMarginLeft * pxPerMm;
       const yPos = currentYMm * pxPerMm;
@@ -464,25 +603,25 @@
       a4Ctx.lineWidth = 1;
       a4Ctx.strokeRect(xPos - 1, yPos - 1, drawWidth + 2, drawHeight + 2);
 
-      // ???????? ??????? ???????? ?? ???????? ?????? ?? ?????? ?4
       a4Ctx.drawImage(offscreenCanvas, xPos, yPos, drawWidth, drawHeight);
 
       currentYMm += cardHeightMm + layout.gap;
     }
   }
 
-  // ???????? ??????? ? ???????
-  const staticInputs = document.querySelectorAll('.controls > .control-group:not(:nth-child(4)) input');
-  staticInputs.forEach(input => {
-    if(input.id !== 'imageLoader' && input.id !== 'templateNameInput' && input.id !== 'cardCount' && input.id !== 'centerHorizontally') {
-      input.addEventListener('input', updateCanvas);
+  // Trigger preview updates on input/select changes
+  const staticInputs = document.querySelectorAll('.controls > .control-group:not(:nth-child(4)) input, .controls > .control-group:not(:nth-child(4)) select');
+  staticInputs.forEach(el => {
+    if(el.id !== 'imageLoader' && el.id !== 'templateNameInput' && el.id !== 'cardCount' && el.id !== 'centerHorizontally' && el.id !== 'templateSelect') {
+      el.addEventListener('input', updateCanvas);
+      el.addEventListener('change', updateCanvas); // Covers dropdown selects smoothly
     }
   });
 
   generateInputFields();
 
   // --- Local Storage Templates Logic ---
-  const STORAGE_KEY = 'chm_card_templates_v4';
+  const STORAGE_KEY = 'chm_card_templates_v5'; // Bumped version key to prevent older template conflicts
 
   function getTemplates() {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -521,10 +660,19 @@
       membersData: getMembersData(),
       nameX: document.getElementById('nameX').value,
       nameY: document.getElementById('nameY').value,
+      nameSize: document.getElementById('nameSize').value,
+      nameFont: document.getElementById('nameFont').value,
+
       sinceX: document.getElementById('sinceX').value,
       sinceY: document.getElementById('sinceY').value,
+      sinceSize: document.getElementById('sinceSize').value,
+      sinceFont: document.getElementById('sinceFont').value,
+
       idX: document.getElementById('idX').value,
       idY: document.getElementById('idY').value,
+      idSize: document.getElementById('idSize').value,
+      idFont: document.getElementById('idFont').value,
+
       cardCount: document.getElementById('cardCount').value,
       cardWidth: document.getElementById('cardWidth').value,
       marginLeft: document.getElementById('marginLeft').value,
@@ -559,7 +707,13 @@
         centerCheckbox.dispatchEvent(new Event('change'));
       }
 
-      const staticKeys = ['nameX', 'nameY', 'sinceX', 'sinceY', 'idX', 'idY', 'cardCount', 'cardWidth', 'marginLeft', 'marginTop', 'cardGap'];
+      const staticKeys = [
+        'nameX', 'nameY', 'nameSize', 'nameFont',
+        'sinceX', 'sinceY', 'sinceSize', 'sinceFont',
+        'idX', 'idY', 'idSize', 'idFont',
+        'cardCount', 'cardWidth', 'marginLeft', 'marginTop', 'cardGap'
+      ];
+
       staticKeys.forEach(key => {
         const el = document.getElementById(key);
         if (el && settings[key] !== undefined) el.value = settings[key];
@@ -603,13 +757,12 @@
 
     const layout = getLayout();
     const members = getMembersData();
-    const pos = getPositions();
+    const fmt = getFormatting();
 
     const aspectRatio = canvas.height / canvas.width;
     const cardHeightMm = layout.width * aspectRatio;
     const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
 
-    // ??????? ????????? ????? ??? ??????? ???????? ? PDF
     const offscreenCanvas = document.createElement('canvas');
     offscreenCanvas.width = canvas.width;
     offscreenCanvas.height = canvas.height;
@@ -625,7 +778,7 @@
         currentY = layout.marginTop;
       }
 
-      drawSingleCardData(offCtx, offscreenCanvas, members[i], pos);
+      drawSingleCardData(offCtx, offscreenCanvas, members[i], fmt);
       const cardImgData = offscreenCanvas.toDataURL('image/png', 1.0);
 
       pdf.addImage(cardImgData, 'PNG', effectiveMarginLeft, currentY, layout.width, cardHeightMm);
