@@ -1,457 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CHM Card Generator - Pro Layout & Templates</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #eef2f3;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .container {
-      background: #fff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 1300px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 400px 1fr 1fr; /* Widened left column slightly for new inputs */
-      gap: 20px;
-    }
-    .header {
-      grid-column: span 3;
-      text-align: center;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 15px;
-      margin-bottom: 10px;
-    }
-    .controls {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      height: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-      padding-right: 10px;
-    }
-    .controls::-webkit-scrollbar {
-      width: 6px;
-    }
-    .controls::-webkit-scrollbar-thumb {
-      background-color: #ccc;
-      border-radius: 3px;
-    }
-    .control-group {
-      border: 1px solid #ddd;
-      padding: 10px;
-      border-radius: 8px;
-      background: #fafafa;
-    }
-    .control-group h3 {
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      color: #2e3e30;
-      text-transform: uppercase;
-    }
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: bold;
-      margin-top: 8px;
-      color: #666;
-    }
-    input[type="text"], input[type="number"], select {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-family: inherit;
-    }
-    input[type="checkbox"] {
-      width: auto;
-      margin-right: 8px;
-      cursor: pointer;
-    }
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      font-size: 13px;
-      margin-top: 10px;
-      margin-bottom: 5px;
-      color: #2e3e30;
-      cursor: pointer;
-    }
-    input:disabled {
-      background-color: #e9ecef;
-      cursor: not-allowed;
-    }
-    .pos-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5px;
-    }
-    /* New grid for X, Y, Size, and Font inputs */
-    .format-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1.5fr;
-      gap: 5px;
-      margin-bottom: 8px;
-    }
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .flex-row {
-      display: flex;
-      gap: 5px;
-      margin-top: 5px;
-    }
-    .btn {
-      padding: 10px 15px;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.3s;
-      text-align: center;
-      flex: 1;
-    }
-    .btn-large {
-      padding: 15px;
-      font-size: 16px;
-    }
-    .btn-primary { background-color: #2e3e30; }
-    .btn-primary:hover { background-color: #1a241b; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHM Card Generator - Pro Layout & Templates</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #eef2f3;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 1400px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 480px 1fr 1fr;
+            gap: 20px;
+        }
+        .header {
+            grid-column: span 3;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .controls::-webkit-scrollbar {
+            width: 6px;
+        }
+        .controls::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+        .control-group {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .control-group h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #2e3e30;
+            text-transform: uppercase;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+            color: #666;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: #2e3e30;
+            cursor: pointer;
+        }
+        input:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        .pos-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
 
-    .btn-secondary { background-color: #555; }
-    .btn-secondary:hover { background-color: #333; }
+        /* ??????????? ???? ??? X, Y, Size, Font ? Color */
+        .format-inputs {
+            display: grid;
+            grid-template-columns: 0.8fr 0.8fr 0.8fr 1.5fr 1fr;
+            gap: 5px;
+            margin-bottom: 8px;
+            align-items: end;
+        }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .flex-row {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        .btn {
+            padding: 10px 15px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            text-align: center;
+            flex: 1;
+        }
+        .btn-large {
+            padding: 15px;
+            font-size: 16px;
+        }
+        .btn-primary { background-color: #2e3e30; }
+        .btn-primary:hover { background-color: #1a241b; }
 
-    .btn-danger { background-color: #a03030; }
-    .btn-danger:hover { background-color: #7a2020; }
+        .btn-secondary { background-color: #555; }
+        .btn-secondary:hover { background-color: #333; }
 
-    .preview-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #e0e0e0;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    .info-text {
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    canvas {
-      max-width: 100%;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      background: white;
-    }
-    #a4Canvas {
-      width: 100%;
-      max-width: 350px;
-      height: auto;
-      aspect-ratio: 1 / 1.414;
-    }
+        .btn-danger { background-color: #a03030; }
+        .btn-danger:hover { background-color: #7a2020; }
 
-    .member-block {
-      background: #fff;
-      border: 1px solid #eee;
-      padding: 10px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-    }
-    .member-block h4 {
-      margin: 0 0 5px 0;
-      font-size: 12px;
-      color: #2e3e30;
-    }
-    /* Mini-labels for the tight inputs array */
-    .mini-label {
-      font-size: 10px;
-      color: #888;
-      margin-bottom: 2px;
-      display: block;
-    }
+        .preview-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .info-text {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        canvas {
+            max-width: 100%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            background: white;
+        }
+        #a4Canvas {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            aspect-ratio: 1 / 1.414;
+        }
 
-    @media (max-width: 1024px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      .header {
-        grid-column: span 1;
-      }
-    }
-  </style>
+        .member-block {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .member-block h4 {
+            margin: 0 0 5px 0;
+            font-size: 12px;
+            color: #2e3e30;
+        }
+        .mini-label {
+            font-size: 10px;
+            color: #888;
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        /* ????? ??? ?????? ?????? */
+        .color-popup {
+            display: none;
+            position: absolute;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            grid-template-columns: repeat(5, 25px);
+            gap: 5px;
+            z-index: 1000;
+        }
+        .color-swatch {
+            width: 25px;
+            height: 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: transform 0.1s;
+        }
+        .color-swatch:hover {
+            transform: scale(1.15);
+            border-color: #000;
+        }
+        .palette-btn {
+            background: #eee;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .palette-btn:hover { background: #ddd; }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                grid-column: span 1;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="header">
-    <h1>CHM Membership Card Creator</h1>
-    <p>Fill data, adjust layout, format text, save templates, and export to A4 PDF</p>
-  </div>
-
-  <div class="controls">
-    <div class="control-group">
-      <h3>1. Template File</h3>
-      <input type="file" id="imageLoader" accept="image/*" />
+    <div class="header">
+        <h1>CHM Membership Card Creator</h1>
+        <p>Fill data, adjust layout, format text, save templates, and export to A4 PDF</p>
     </div>
 
-    <div class="control-group">
-      <h3>2. Saved Settings (Local)</h3>
-      <label>Save Current Settings As:</label>
-      <div class="flex-row">
-        <input type="text" id="templateNameInput" placeholder="E.g., Default Setup" />
-        <button class="btn btn-primary" id="saveTemplateBtn" style="flex: 0 0 auto;">Save</button>
-      </div>
-
-      <label>Load Saved Settings:</label>
-      <select id="templateSelect">
-        <option value="">-- Select a template --</option>
-      </select>
-      <div class="flex-row">
-        <button class="btn btn-secondary" id="loadTemplateBtn">Load</button>
-        <button class="btn btn-danger" id="deleteTemplateBtn">Delete</button>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <h3>3. Layout & Count</h3>
-      <label>Number of Cards to Export</label>
-      <input type="number" id="cardCount" value="3" min="1" step="1" />
-
-      <label>Card Width (mm)</label>
-      <input type="number" id="cardWidth" value="153" step="1" />
-
-      <label class="checkbox-label">
-        <input type="checkbox" id="centerHorizontally" checked />
-        Center Cards Horizontally
-      </label>
-
-      <label>Left Margin (mm)</label>
-      <input type="number" id="marginLeft" value="0" step="1" disabled />
-
-      <label>Top Margin (mm)</label>
-      <input type="number" id="marginTop" value="0" step="1" />
-
-      <label>Gap Between Cards (mm)</label>
-      <input type="number" id="cardGap" value="3" step="1" />
-    </div>
-
-    <div class="control-group">
-      <h3>4. Member Information</h3>
-      <div id="membersContainer">
-      </div>
-    </div>
-
-    <div class="control-group">
-      <h3>5. Text Formatting & Positioning</h3>
-
-      <label>Name Field</label>
-      <div class="format-inputs">
-        <div><span class="mini-label">X Pos</span><input type="number" id="nameX" value="620" step="1" /></div>
-        <div><span class="mini-label">Y Pos</span><input type="number" id="nameY" value="845" step="1" /></div>
-        <div><span class="mini-label">Size (px)</span><input type="number" id="nameSize" value="50" step="1" /></div>
-        <div>
-          <span class="mini-label">Font Family</span>
-          <select id="nameFont">
-            <optgroup label="(Sans-Serif)">
-              <option value="Arial, sans-serif">Arial</option>
-              <option value="Helvetica, sans-serif">Helvetica</option>
-              <option value="Verdana, sans-serif">Verdana</option>
-              <option value="Tahoma, sans-serif">Tahoma</option>
-              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-              <option value="'Arial Black', sans-serif">Arial Black</option>
-              <option value="'Century Gothic', sans-serif">Century Gothic</option>
-            </optgroup>
-
-            <optgroup label="(Serif)">
-              <option value="'Times New Roman', serif" selected>Times New Roman</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="Garamond, serif">Garamond</option>
-              <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino / Book Antiqua</option>
-            </optgroup>
-
-            <optgroup label="(Monospace)">
-              <option value="'Courier New', Courier, monospace">Courier New</option>
-              <option value="Consolas, monospace">Consolas</option>
-              <option value="Monaco, monospace">Monaco</option>
-              <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
-            </optgroup>
-
-            <optgroup label="(Display)">
-              <option value="Impact, Charcoal, sans-serif">Impact</option>
-              <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
-              <option value="'Brush Script MT', cursive">Brush Script MT</option>
-              <option value="Copperplate, 'Copperplate Gothic Light', fantasy">Copperplate</option>
-              <option value="Papyrus, fantasy">Papyrus</option>
-            </optgroup>
-          </select>
+    <div class="controls">
+        <div class="control-group">
+            <h3>1. Template File</h3>
+            <input type="file" id="imageLoader" accept="image/*" />
         </div>
-      </div>
 
-      <label>Since Field</label>
-      <div class="format-inputs">
-        <div><span class="mini-label">X Pos</span><input type="number" id="sinceX" value="620" step="1" /></div>
-        <div><span class="mini-label">Y Pos</span><input type="number" id="sinceY" value="950" step="1" /></div>
-        <div><span class="mini-label">Size (px)</span><input type="number" id="sinceSize" value="50" step="1" /></div>
-        <div>
-          <span class="mini-label">Font Family</span>
-          <select id="sinceFont">
+        <div class="control-group">
+            <h3>2. Saved Settings (Local)</h3>
+            <label>Save Current Settings As:</label>
+            <div class="flex-row">
+                <input type="text" id="templateNameInput" placeholder="E.g., Default Setup" />
+                <button class="btn btn-primary" id="saveTemplateBtn" style="flex: 0 0 auto;">Save</button>
+            </div>
 
-            <optgroup label="(Sans-Serif)">
-              <option value="Arial, sans-serif">Arial</option>
-              <option value="Helvetica, sans-serif">Helvetica</option>
-              <option value="Verdana, sans-serif">Verdana</option>
-              <option value="Tahoma, sans-serif">Tahoma</option>
-              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-              <option value="'Arial Black', sans-serif">Arial Black</option>
-              <option value="'Century Gothic', sans-serif">Century Gothic</option>
-            </optgroup>
-
-            <optgroup label="(Serif)">
-              <option value="'Times New Roman', serif" selected>Times New Roman</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="Garamond, serif">Garamond</option>
-              <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino / Book Antiqua</option>
-            </optgroup>
-
-            <optgroup label="(Monospace)">
-              <option value="'Courier New', Courier, monospace">Courier New</option>
-              <option value="Consolas, monospace">Consolas</option>
-              <option value="Monaco, monospace">Monaco</option>
-              <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
-            </optgroup>
-
-            <optgroup label="(Display)">
-              <option value="Impact, Charcoal, sans-serif">Impact</option>
-              <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
-              <option value="'Brush Script MT', cursive">Brush Script MT</option>
-              <option value="Copperplate, 'Copperplate Gothic Light', fantasy">Copperplate</option>
-              <option value="Papyrus, fantasy">Papyrus</option>
-            </optgroup>
-          </select>
+            <label>Load Saved Settings:</label>
+            <select id="templateSelect">
+                <option value="">-- Select a template --</option>
+            </select>
+            <div class="flex-row">
+                <button class="btn btn-secondary" id="loadTemplateBtn">Load</button>
+                <button class="btn btn-danger" id="deleteTemplateBtn">Delete</button>
+            </div>
         </div>
-      </div>
 
-      <label>ID Field</label>
-      <div class="format-inputs">
-        <div><span class="mini-label">X Pos</span><input type="number" id="idX" value="1180" step="1" /></div>
-        <div><span class="mini-label">Y Pos</span><input type="number" id="idY" value="950" step="1" /></div>
-        <div><span class="mini-label">Size (px)</span><input type="number" id="idSize" value="50" step="1" /></div>
-        <div>
-          <span class="mini-label">Font Family</span>
-          <select id="idFont">
+        <div class="control-group">
+            <h3>3. Layout & Count</h3>
+            <label>Number of Cards to Export</label>
+            <input type="number" id="cardCount" value="3" min="1" step="1" />
 
-            <optgroup label="(Sans-Serif)">
-              <option value="Arial, sans-serif">Arial</option>
-              <option value="Helvetica, sans-serif">Helvetica</option>
-              <option value="Verdana, sans-serif">Verdana</option>
-              <option value="Tahoma, sans-serif">Tahoma</option>
-              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-              <option value="'Arial Black', sans-serif">Arial Black</option>
-              <option value="'Century Gothic', sans-serif">Century Gothic</option>
-            </optgroup>
+            <label>Card Width (mm)</label>
+            <input type="number" id="cardWidth" value="153" step="1" />
 
-            <optgroup label="(Serif)">
-              <option value="'Times New Roman', serif" selected>Times New Roman</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="Garamond, serif">Garamond</option>
-              <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif">Palatino / Book Antiqua</option>
-            </optgroup>
+            <label class="checkbox-label">
+                <input type="checkbox" id="centerHorizontally" checked />
+                Center Cards Horizontally
+            </label>
 
-            <optgroup label="(Monospace)">
-              <option value="'Courier New', Courier, monospace">Courier New</option>
-              <option value="Consolas, monospace">Consolas</option>
-              <option value="Monaco, monospace">Monaco</option>
-              <option value="'Lucida Console', Monaco, monospace">Lucida Console</option>
-            </optgroup>
+            <label>Left Margin (mm)</label>
+            <input type="number" id="marginLeft" value="0" step="1" disabled />
 
-            <optgroup label="(Display)">
-              <option value="Impact, Charcoal, sans-serif">Impact</option>
-              <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
-              <option value="'Brush Script MT', cursive">Brush Script MT</option>
-              <option value="Copperplate, 'Copperplate Gothic Light', fantasy">Copperplate</option>
-              <option value="Papyrus, fantasy">Papyrus</option>
-            </optgroup>
-          </select>
+            <label>Top Margin (mm)</label>
+            <input type="number" id="marginTop" value="0" step="1" />
+
+            <label>Gap Between Cards (mm)</label>
+            <input type="number" id="cardGap" value="3" step="1" />
         </div>
-      </div>
+
+        <div class="control-group">
+            <h3>4. Member Information</h3>
+            <div id="membersContainer">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>5. Text Formatting & Positioning</h3>
+
+            <label>Name Field</label>
+            <div class="format-inputs">
+                <div><span class="mini-label">X Pos</span><input type="number" id="nameX" value="620" step="1" /></div>
+                <div><span class="mini-label">Y Pos</span><input type="number" id="nameY" value="845" step="1" /></div>
+                <div><span class="mini-label">Size</span><input type="number" id="nameSize" value="50" step="1" /></div>
+                <div>
+                    <span class="mini-label">Font Family</span>
+                    <select id="nameFont">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif" selected>Times New Roman</option>
+                        <option value="'Courier New', Courier, monospace">Courier New</option>
+                        <option value="Impact, Charcoal, sans-serif">Impact</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="mini-label">Color</span>
+                    <div class="flex-row" style="margin-top:0;">
+                        <input type="color" id="nameColor" value="#2e3e30" style="padding:0; height:28px;" />
+                        <button class="palette-btn" data-target="nameColor" style="height:28px;" title="Palette">?</button>
+                    </div>
+                </div>
+            </div>
+
+            <label>Since Field</label>
+            <div class="format-inputs">
+                <div><span class="mini-label">X Pos</span><input type="number" id="sinceX" value="620" step="1" /></div>
+                <div><span class="mini-label">Y Pos</span><input type="number" id="sinceY" value="950" step="1" /></div>
+                <div><span class="mini-label">Size</span><input type="number" id="sinceSize" value="50" step="1" /></div>
+                <div>
+                    <span class="mini-label">Font Family</span>
+                    <select id="sinceFont">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif" selected>Times New Roman</option>
+                        <option value="'Courier New', Courier, monospace">Courier New</option>
+                        <option value="Impact, Charcoal, sans-serif">Impact</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="mini-label">Color</span>
+                    <div class="flex-row" style="margin-top:0;">
+                        <input type="color" id="sinceColor" value="#2e3e30" style="padding:0; height:28px;" />
+                        <button class="palette-btn" data-target="sinceColor" style="height:28px;" title="Palette">?</button>
+                    </div>
+                </div>
+            </div>
+
+            <label>ID Field</label>
+            <div class="format-inputs">
+                <div><span class="mini-label">X Pos</span><input type="number" id="idX" value="1180" step="1" /></div>
+                <div><span class="mini-label">Y Pos</span><input type="number" id="idY" value="950" step="1" /></div>
+                <div><span class="mini-label">Size</span><input type="number" id="idSize" value="50" step="1" /></div>
+                <div>
+                    <span class="mini-label">Font Family</span>
+                    <select id="idFont">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif" selected>Times New Roman</option>
+                        <option value="'Courier New', Courier, monospace">Courier New</option>
+                        <option value="Impact, Charcoal, sans-serif">Impact</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="mini-label">Color</span>
+                    <div class="flex-row" style="margin-top:0;">
+                        <input type="color" id="idColor" value="#2e3e30" style="padding:0; height:28px;" />
+                        <button class="palette-btn" data-target="idColor" style="height:28px;" title="Palette">?</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary btn-large" id="downloadPdfBtn">Download A4 PDF</button>
+            <button class="btn btn-secondary btn-large" id="downloadSingleBtn">Download First Card</button>
+        </div>
     </div>
 
-    <div class="action-buttons">
-      <button class="btn btn-primary btn-large" id="downloadPdfBtn">Download A4 PDF</button>
-      <button class="btn btn-secondary btn-large" id="downloadSingleBtn">Download First Card</button>
+    <div class="preview-area">
+        <div class="info-text">Card 1 Preview</div>
+        <canvas id="cardCanvas"></canvas>
     </div>
-  </div>
 
-  <div class="preview-area">
-    <div class="info-text">Card 1 Preview</div>
-    <canvas id="cardCanvas"></canvas>
-  </div>
-
-  <div class="preview-area">
-    <div class="info-text">A4 Layout Preview (Page 1)</div>
-    <canvas id="a4Canvas" width="420" height="594"></canvas>
-  </div>
+    <div class="preview-area">
+        <div class="info-text">A4 Layout Preview (Page 1)</div>
+        <canvas id="a4Canvas" width="420" height="594"></canvas>
+    </div>
 </div>
 
+<div id="colorPopup" class="color-popup"></div>
+
 <script>
-  const { jsPDF } = window.jspdf;
+    const { jsPDF } = window.jspdf;
 
-  const canvas = document.getElementById('cardCanvas');
-  const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('cardCanvas');
+    const ctx = canvas.getContext('2d');
 
-  const a4Canvas = document.getElementById('a4Canvas');
-  const a4Ctx = a4Canvas.getContext('2d');
+    const a4Canvas = document.getElementById('a4Canvas');
+    const a4Ctx = a4Canvas.getContext('2d');
 
-  let baseImage = new Image();
-  const A4_WIDTH_MM = 210;
+    let baseImage = new Image();
+    const A4_WIDTH_MM = 210;
 
-  // --- Dynamic Member Inputs ---
-  function getMembersData() {
-    const names = document.querySelectorAll('.dyn-name');
-    const sinces = document.querySelectorAll('.dyn-since');
-    const ids = document.querySelectorAll('.dyn-id');
-    const data = [];
-    for(let i = 0; i < names.length; i++) {
-      data.push({
-        name: names[i].value,
-        since: sinces[i].value,
-        id: ids[i].value
-      });
+    // --- ???????? ??????? ??? ?????? (20 ??????) ---
+    const PALETTE_COLORS = [
+        '#000000', '#333333', '#808080', '#FFFFFF', '#2e3e30',
+        '#FF0000', '#E67E22', '#F1C40F', '#2ECC71', '#1ABC9C',
+        '#3498DB', '#0000FF', '#9B59B6', '#8E44AD', '#FF00FF',
+        '#E74C3C', '#C0392B', '#D35400', '#7F8C8D', '#BDC3C7'
+    ];
+
+    const colorPopup = document.getElementById('colorPopup');
+    let currentColorInput = null;
+
+    PALETTE_COLORS.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.backgroundColor = color;
+        swatch.addEventListener('click', () => {
+            if(currentColorInput) {
+                currentColorInput.value = color;
+                updateCanvas();
+            }
+            colorPopup.style.display = 'none';
+        });
+        colorPopup.appendChild(swatch);
+    });
+
+    document.querySelectorAll('.palette-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const targetId = btn.getAttribute('data-target');
+            currentColorInput = document.getElementById(targetId);
+
+            const rect = btn.getBoundingClientRect();
+            colorPopup.style.display = 'grid';
+            colorPopup.style.left = (rect.left + window.scrollX - 120) + 'px';
+            colorPopup.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.color-popup') && !e.target.closest('.palette-btn')) {
+            colorPopup.style.display = 'none';
+        }
+    });
+
+    // --- Dynamic Member Inputs ---
+    function getMembersData() {
+        const names = document.querySelectorAll('.dyn-name');
+        const sinces = document.querySelectorAll('.dyn-since');
+        const ids = document.querySelectorAll('.dyn-id');
+        const data = [];
+        for(let i = 0; i < names.length; i++) {
+            data.push({
+                name: names[i].value,
+                since: sinces[i].value,
+                id: ids[i].value
+            });
+        }
+        return data;
     }
-    return data;
-  }
 
-  function generateInputFields(forceData = null) {
-    const count = parseInt(document.getElementById('cardCount').value) || 1;
-    const container = document.getElementById('membersContainer');
+    function generateInputFields(forceData = null) {
+        const count = parseInt(document.getElementById('cardCount').value) || 1;
+        const container = document.getElementById('membersContainer');
 
-    const existingData = forceData || getMembersData();
-    container.innerHTML = '';
+        const existingData = forceData || getMembersData();
+        container.innerHTML = '';
 
-    for (let i = 0; i < count; i++) {
-      const prev = existingData[i] || { name: `John Doe ${i+1}`, since: '2026', id: `00${i+1}` };
+        for (let i = 0; i < count; i++) {
+            const prev = existingData[i] || { name: `John Doe ${i+1}`, since: '2026', id: `00${i+1}` };
 
-      const div = document.createElement('div');
-      div.className = 'member-block';
-      div.innerHTML = `
+            const div = document.createElement('div');
+            div.className = 'member-block';
+            div.innerHTML = `
         <h4>Card ${i + 1}</h4>
         <label>Member Name</label>
         <input type="text" class="dyn-name" placeholder="Enter Name" value="${prev.name}" />
@@ -466,338 +487,345 @@
           </div>
         </div>
       `;
-      container.appendChild(div);
+            container.appendChild(div);
+        }
+
+        container.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', updateCanvas);
+        });
+
+        updateCanvas();
     }
 
-    container.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', updateCanvas);
+    document.getElementById('cardCount').addEventListener('input', () => generateInputFields());
+
+    // --- Image Loading ---
+    document.getElementById('imageLoader').addEventListener('change', function(e){
+        const reader = new FileReader();
+        reader.onload = function(event){
+            baseImage.onload = function() {
+                canvas.width = baseImage.width;
+                canvas.height = baseImage.height;
+                updateCanvas();
+            }
+            baseImage.src = event.target.result;
+        }
+        reader.readAsDataURL(e.target.files[0]);
     });
 
-    updateCanvas();
-  }
+    // --- Checkbox Logic ---
+    const centerCheckbox = document.getElementById('centerHorizontally');
+    const marginLeftInput = document.getElementById('marginLeft');
 
-  document.getElementById('cardCount').addEventListener('input', () => generateInputFields());
-
-  // --- Image Loading ---
-  document.getElementById('imageLoader').addEventListener('change', function(e){
-    const reader = new FileReader();
-    reader.onload = function(event){
-      baseImage.onload = function() {
-        canvas.width = baseImage.width;
-        canvas.height = baseImage.height;
+    centerCheckbox.addEventListener('change', function() {
+        marginLeftInput.disabled = this.checked;
         updateCanvas();
-      }
-      baseImage.src = event.target.result;
-    }
-    reader.readAsDataURL(e.target.files[0]);
-  });
+    });
 
-  // --- Checkbox Logic ---
-  const centerCheckbox = document.getElementById('centerHorizontally');
-  const marginLeftInput = document.getElementById('marginLeft');
+    // --- Drawing Logic ---
+    function drawSingleCardData(context, targetCanvas, data, fmt) {
+        context.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+        context.drawImage(baseImage, 0, 0, targetCanvas.width, targetCanvas.height);
 
-  centerCheckbox.addEventListener('change', function() {
-    marginLeftInput.disabled = this.checked;
-    updateCanvas();
-  });
+        context.textAlign = "left";
+        context.textBaseline = "bottom";
 
-  // --- Drawing Logic ---
-  function drawSingleCardData(context, targetCanvas, data, fmt) {
-    context.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
-    context.drawImage(baseImage, 0, 0, targetCanvas.width, targetCanvas.height);
+        // Draw Name
+        context.fillStyle = fmt.name.color;
+        context.font = `bold ${fmt.name.size}px ${fmt.name.font}`;
+        context.fillText(data.name, fmt.name.x, fmt.name.y);
 
-    context.fillStyle = "#2e3e30";
-    context.textAlign = "left";
-    context.textBaseline = "bottom";
+        // Draw Since
+        context.fillStyle = fmt.since.color;
+        context.font = `bold ${fmt.since.size}px ${fmt.since.font}`;
+        context.fillText(data.since, fmt.since.x, fmt.since.y);
 
-    // Draw Name
-    context.font = `bold ${fmt.name.size}px ${fmt.name.font}`;
-    context.fillText(data.name, fmt.name.x, fmt.name.y);
-
-    // Draw Since
-    context.font = `bold ${fmt.since.size}px ${fmt.since.font}`;
-    context.fillText(data.since, fmt.since.x, fmt.since.y);
-
-    // Draw ID
-    context.font = `bold ${fmt.id.size}px ${fmt.id.font}`;
-    context.fillText(data.id, fmt.id.x, fmt.id.y);
-  }
-
-  function getFormatting() {
-    return {
-      name: {
-        x: parseFloat(document.getElementById('nameX').value),
-        y: parseFloat(document.getElementById('nameY').value),
-        size: parseFloat(document.getElementById('nameSize').value),
-        font: document.getElementById('nameFont').value
-      },
-      since: {
-        x: parseFloat(document.getElementById('sinceX').value),
-        y: parseFloat(document.getElementById('sinceY').value),
-        size: parseFloat(document.getElementById('sinceSize').value),
-        font: document.getElementById('sinceFont').value
-      },
-      id: {
-        x: parseFloat(document.getElementById('idX').value),
-        y: parseFloat(document.getElementById('idY').value),
-        size: parseFloat(document.getElementById('idSize').value),
-        font: document.getElementById('idFont').value
-      }
-    };
-  }
-
-  function getLayout() {
-    return {
-      count: parseInt(document.getElementById('cardCount').value) || 1,
-      width: parseFloat(document.getElementById('cardWidth').value),
-      marginLeft: parseFloat(document.getElementById('marginLeft').value),
-      marginTop: parseFloat(document.getElementById('marginTop').value),
-      gap: parseFloat(document.getElementById('cardGap').value),
-      centerHorizontally: document.getElementById('centerHorizontally').checked
-    };
-  }
-
-  function updateCanvas() {
-    if (!baseImage.src) return;
-
-    const members = getMembersData();
-    if (members.length === 0) return;
-    const fmt = getFormatting();
-
-    drawSingleCardData(ctx, canvas, members[0], fmt);
-    updateA4Preview(members, fmt);
-  }
-
-  function updateA4Preview(members, fmt) {
-    a4Ctx.fillStyle = "#ffffff";
-    a4Ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
-
-    const layout = getLayout();
-    const aspectRatio = canvas.height / canvas.width;
-    const cardHeightMm = layout.width * aspectRatio;
-    const pxPerMm = 2;
-    const pageHeightPx = a4Canvas.height;
-
-    const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
-
-    const offscreenCanvas = document.createElement('canvas');
-    offscreenCanvas.width = canvas.width;
-    offscreenCanvas.height = canvas.height;
-    const offCtx = offscreenCanvas.getContext('2d');
-
-    let currentYMm = layout.marginTop;
-
-    for (let i = 0; i < layout.count; i++) {
-      if (!members[i]) break;
-
-      drawSingleCardData(offCtx, offscreenCanvas, members[i], fmt);
-
-      const xPos = effectiveMarginLeft * pxPerMm;
-      const yPos = currentYMm * pxPerMm;
-      const drawWidth = layout.width * pxPerMm;
-      const drawHeight = cardHeightMm * pxPerMm;
-
-      if (yPos + drawHeight > pageHeightPx) break;
-
-      a4Ctx.strokeStyle = "#ccc";
-      a4Ctx.lineWidth = 1;
-      a4Ctx.strokeRect(xPos - 1, yPos - 1, drawWidth + 2, drawHeight + 2);
-
-      a4Ctx.drawImage(offscreenCanvas, xPos, yPos, drawWidth, drawHeight);
-
-      currentYMm += cardHeightMm + layout.gap;
-    }
-  }
-
-  // Trigger preview updates on input/select changes
-  const staticInputs = document.querySelectorAll('.controls > .control-group:not(:nth-child(4)) input, .controls > .control-group:not(:nth-child(4)) select');
-  staticInputs.forEach(el => {
-    if(el.id !== 'imageLoader' && el.id !== 'templateNameInput' && el.id !== 'cardCount' && el.id !== 'centerHorizontally' && el.id !== 'templateSelect') {
-      el.addEventListener('input', updateCanvas);
-      el.addEventListener('change', updateCanvas); // Covers dropdown selects smoothly
-    }
-  });
-
-  generateInputFields();
-
-  // --- Local Storage Templates Logic ---
-  const STORAGE_KEY = 'chm_card_templates_v5'; // Bumped version key to prevent older template conflicts
-
-  function getTemplates() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-  }
-
-  function saveTemplatesData(templates) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
-  }
-
-  function updateTemplateDropdown() {
-    const select = document.getElementById('templateSelect');
-    const currentValue = select.value;
-    select.innerHTML = '<option value="">-- Select a template --</option>';
-
-    const templates = getTemplates();
-    for (const name in templates) {
-      const option = document.createElement('option');
-      option.value = name;
-      option.textContent = name;
-      select.appendChild(option);
+        // Draw ID
+        context.fillStyle = fmt.id.color;
+        context.font = `bold ${fmt.id.size}px ${fmt.id.font}`;
+        context.fillText(data.id, fmt.id.x, fmt.id.y);
     }
 
-    if (templates[currentValue]) {
-      select.value = currentValue;
+    function getFormatting() {
+        return {
+            name: {
+                x: parseFloat(document.getElementById('nameX').value),
+                y: parseFloat(document.getElementById('nameY').value),
+                size: parseFloat(document.getElementById('nameSize').value),
+                font: document.getElementById('nameFont').value,
+                color: document.getElementById('nameColor').value
+            },
+            since: {
+                x: parseFloat(document.getElementById('sinceX').value),
+                y: parseFloat(document.getElementById('sinceY').value),
+                size: parseFloat(document.getElementById('sinceSize').value),
+                font: document.getElementById('sinceFont').value,
+                color: document.getElementById('sinceColor').value
+            },
+            id: {
+                x: parseFloat(document.getElementById('idX').value),
+                y: parseFloat(document.getElementById('idY').value),
+                size: parseFloat(document.getElementById('idSize').value),
+                font: document.getElementById('idFont').value,
+                color: document.getElementById('idColor').value
+            }
+        };
     }
-  }
 
-  document.getElementById('saveTemplateBtn').addEventListener('click', () => {
-    const name = document.getElementById('templateNameInput').value.trim();
-    if (!name) {
-      alert("Please enter a name for your template.");
-      return;
+    function getLayout() {
+        return {
+            count: parseInt(document.getElementById('cardCount').value) || 1,
+            width: parseFloat(document.getElementById('cardWidth').value),
+            marginLeft: parseFloat(document.getElementById('marginLeft').value),
+            marginTop: parseFloat(document.getElementById('marginTop').value),
+            gap: parseFloat(document.getElementById('cardGap').value),
+            centerHorizontally: document.getElementById('centerHorizontally').checked
+        };
     }
 
-    const settings = {
-      membersData: getMembersData(),
-      nameX: document.getElementById('nameX').value,
-      nameY: document.getElementById('nameY').value,
-      nameSize: document.getElementById('nameSize').value,
-      nameFont: document.getElementById('nameFont').value,
+    function updateCanvas() {
+        if (!baseImage.src) return;
 
-      sinceX: document.getElementById('sinceX').value,
-      sinceY: document.getElementById('sinceY').value,
-      sinceSize: document.getElementById('sinceSize').value,
-      sinceFont: document.getElementById('sinceFont').value,
+        const members = getMembersData();
+        if (members.length === 0) return;
+        const fmt = getFormatting();
 
-      idX: document.getElementById('idX').value,
-      idY: document.getElementById('idY').value,
-      idSize: document.getElementById('idSize').value,
-      idFont: document.getElementById('idFont').value,
+        drawSingleCardData(ctx, canvas, members[0], fmt);
+        updateA4Preview(members, fmt);
+    }
 
-      cardCount: document.getElementById('cardCount').value,
-      cardWidth: document.getElementById('cardWidth').value,
-      marginLeft: document.getElementById('marginLeft').value,
-      marginTop: document.getElementById('marginTop').value,
-      cardGap: document.getElementById('cardGap').value,
-      centerHorizontally: document.getElementById('centerHorizontally').checked
-    };
+    function updateA4Preview(members, fmt) {
+        a4Ctx.fillStyle = "#ffffff";
+        a4Ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
 
-    const templates = getTemplates();
-    templates[name] = settings;
-    saveTemplatesData(templates);
+        const layout = getLayout();
+        const aspectRatio = canvas.height / canvas.width;
+        const cardHeightMm = layout.width * aspectRatio;
+        const pxPerMm = 2;
+        const pageHeightPx = a4Canvas.height;
+
+        const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
+
+        const offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.width = canvas.width;
+        offscreenCanvas.height = canvas.height;
+        const offCtx = offscreenCanvas.getContext('2d');
+
+        let currentYMm = layout.marginTop;
+
+        for (let i = 0; i < layout.count; i++) {
+            if (!members[i]) break;
+
+            drawSingleCardData(offCtx, offscreenCanvas, members[i], fmt);
+
+            const xPos = effectiveMarginLeft * pxPerMm;
+            const yPos = currentYMm * pxPerMm;
+            const drawWidth = layout.width * pxPerMm;
+            const drawHeight = cardHeightMm * pxPerMm;
+
+            if (yPos + drawHeight > pageHeightPx) break;
+
+            a4Ctx.strokeStyle = "#ccc";
+            a4Ctx.lineWidth = 1;
+            a4Ctx.strokeRect(xPos - 1, yPos - 1, drawWidth + 2, drawHeight + 2);
+            a4Ctx.drawImage(offscreenCanvas, xPos, yPos, drawWidth, drawHeight);
+
+            currentYMm += cardHeightMm + layout.gap;
+        }
+    }
+
+    // Trigger preview updates on input/select changes
+    const staticInputs = document.querySelectorAll('.controls > .control-group:not(:nth-child(4)) input, .controls > .control-group:not(:nth-child(4)) select');
+    staticInputs.forEach(el => {
+        if(el.id !== 'imageLoader' && el.id !== 'templateNameInput' && el.id !== 'cardCount' && el.id !== 'centerHorizontally' && el.id !== 'templateSelect') {
+            el.addEventListener('input', updateCanvas);
+            el.addEventListener('change', updateCanvas);
+        }
+    });
+
+    generateInputFields();
+
+    // --- Local Storage Templates Logic ---
+    const STORAGE_KEY = 'chm_card_templates_v6';
+
+    function getTemplates() {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    }
+
+    function saveTemplatesData(templates) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
+    }
+
+    function updateTemplateDropdown() {
+        const select = document.getElementById('templateSelect');
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">-- Select a template --</option>';
+
+        const templates = getTemplates();
+        for (const name in templates) {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            select.appendChild(option);
+        }
+
+        if (templates[currentValue]) {
+            select.value = currentValue;
+        }
+    }
+
+    document.getElementById('saveTemplateBtn').addEventListener('click', () => {
+        const name = document.getElementById('templateNameInput').value.trim();
+        if (!name) {
+            alert("Please enter a name for your template.");
+            return;
+        }
+
+        const settings = {
+            membersData: getMembersData(),
+            nameX: document.getElementById('nameX').value,
+            nameY: document.getElementById('nameY').value,
+            nameSize: document.getElementById('nameSize').value,
+            nameFont: document.getElementById('nameFont').value,
+            nameColor: document.getElementById('nameColor').value,
+
+            sinceX: document.getElementById('sinceX').value,
+            sinceY: document.getElementById('sinceY').value,
+            sinceSize: document.getElementById('sinceSize').value,
+            sinceFont: document.getElementById('sinceFont').value,
+            sinceColor: document.getElementById('sinceColor').value,
+
+            idX: document.getElementById('idX').value,
+            idY: document.getElementById('idY').value,
+            idSize: document.getElementById('idSize').value,
+            idFont: document.getElementById('idFont').value,
+            idColor: document.getElementById('idColor').value,
+
+            cardCount: document.getElementById('cardCount').value,
+            cardWidth: document.getElementById('cardWidth').value,
+            marginLeft: document.getElementById('marginLeft').value,
+            marginTop: document.getElementById('marginTop').value,
+            cardGap: document.getElementById('cardGap').value,
+            centerHorizontally: document.getElementById('centerHorizontally').checked
+        };
+
+        const templates = getTemplates();
+        templates[name] = settings;
+        saveTemplatesData(templates);
+
+        updateTemplateDropdown();
+        document.getElementById('templateSelect').value = name;
+        document.getElementById('templateNameInput').value = '';
+        alert(`Template "${name}" saved successfully!`);
+    });
+
+    document.getElementById('loadTemplateBtn').addEventListener('click', () => {
+        const name = document.getElementById('templateSelect').value;
+        if (!name) {
+            alert("Please select a template to load.");
+            return;
+        }
+
+        const templates = getTemplates();
+        const settings = templates[name];
+
+        if (settings) {
+            if (settings.centerHorizontally !== undefined) {
+                centerCheckbox.checked = settings.centerHorizontally;
+                centerCheckbox.dispatchEvent(new Event('change'));
+            }
+
+            const staticKeys = [
+                'nameX', 'nameY', 'nameSize', 'nameFont', 'nameColor',
+                'sinceX', 'sinceY', 'sinceSize', 'sinceFont', 'sinceColor',
+                'idX', 'idY', 'idSize', 'idFont', 'idColor',
+                'cardCount', 'cardWidth', 'marginLeft', 'marginTop', 'cardGap'
+            ];
+
+            staticKeys.forEach(key => {
+                const el = document.getElementById(key);
+                if (el && settings[key] !== undefined) el.value = settings[key];
+            });
+
+            if (settings.membersData) {
+                generateInputFields(settings.membersData);
+            }
+
+            updateCanvas();
+        }
+    });
+
+    document.getElementById('deleteTemplateBtn').addEventListener('click', () => {
+        const name = document.getElementById('templateSelect').value;
+        if (!name) {
+            alert("Please select a template to delete.");
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete the template "${name}"?`)) {
+            const templates = getTemplates();
+            delete templates[name];
+            saveTemplatesData(templates);
+            updateTemplateDropdown();
+            alert("Template deleted.");
+        }
+    });
 
     updateTemplateDropdown();
-    document.getElementById('templateSelect').value = name;
-    document.getElementById('templateNameInput').value = '';
-    alert(`Template "${name}" saved successfully!`);
-  });
 
-  document.getElementById('loadTemplateBtn').addEventListener('click', () => {
-    const name = document.getElementById('templateSelect').value;
-    if (!name) {
-      alert("Please select a template to load.");
-      return;
-    }
+    // --- Download Actions ---
+    document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+        if (!baseImage.src) {
+            alert("Please upload the card template first!");
+            return;
+        }
 
-    const templates = getTemplates();
-    const settings = templates[name];
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-    if (settings) {
-      if (settings.centerHorizontally !== undefined) {
-        centerCheckbox.checked = settings.centerHorizontally;
-        centerCheckbox.dispatchEvent(new Event('change'));
-      }
+        const layout = getLayout();
+        const members = getMembersData();
+        const fmt = getFormatting();
 
-      const staticKeys = [
-        'nameX', 'nameY', 'nameSize', 'nameFont',
-        'sinceX', 'sinceY', 'sinceSize', 'sinceFont',
-        'idX', 'idY', 'idSize', 'idFont',
-        'cardCount', 'cardWidth', 'marginLeft', 'marginTop', 'cardGap'
-      ];
+        const aspectRatio = canvas.height / canvas.width;
+        const cardHeightMm = layout.width * aspectRatio;
+        const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
 
-      staticKeys.forEach(key => {
-        const el = document.getElementById(key);
-        if (el && settings[key] !== undefined) el.value = settings[key];
-      });
+        const offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.width = canvas.width;
+        offscreenCanvas.height = canvas.height;
+        const offCtx = offscreenCanvas.getContext('2d');
 
-      if (settings.membersData) {
-        generateInputFields(settings.membersData);
-      }
+        let currentY = layout.marginTop;
 
-      updateCanvas();
-    }
-  });
+        for (let i = 0; i < layout.count; i++) {
+            if (!members[i]) break;
 
-  document.getElementById('deleteTemplateBtn').addEventListener('click', () => {
-    const name = document.getElementById('templateSelect').value;
-    if (!name) {
-      alert("Please select a template to delete.");
-      return;
-    }
+            if (currentY + cardHeightMm > pageHeight && currentY > layout.marginTop) {
+                pdf.addPage();
+                currentY = layout.marginTop;
+            }
 
-    if (confirm(`Are you sure you want to delete the template "${name}"?`)) {
-      const templates = getTemplates();
-      delete templates[name];
-      saveTemplatesData(templates);
-      updateTemplateDropdown();
-      alert("Template deleted.");
-    }
-  });
+            drawSingleCardData(offCtx, offscreenCanvas, members[i], fmt);
+            const cardImgData = offscreenCanvas.toDataURL('image/png', 1.0);
 
-  updateTemplateDropdown();
+            pdf.addImage(cardImgData, 'PNG', effectiveMarginLeft, currentY, layout.width, cardHeightMm);
+            currentY += cardHeightMm + layout.gap;
+        }
 
-  // --- Download Actions ---
-  document.getElementById('downloadPdfBtn').addEventListener('click', () => {
-    if (!baseImage.src) {
-      alert("Please upload the card template first!");
-      return;
-    }
+        pdf.save('CHM_Membership_Cards.pdf');
+    });
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    const layout = getLayout();
-    const members = getMembersData();
-    const fmt = getFormatting();
-
-    const aspectRatio = canvas.height / canvas.width;
-    const cardHeightMm = layout.width * aspectRatio;
-    const effectiveMarginLeft = layout.centerHorizontally ? (A4_WIDTH_MM - layout.width) / 2 : layout.marginLeft;
-
-    const offscreenCanvas = document.createElement('canvas');
-    offscreenCanvas.width = canvas.width;
-    offscreenCanvas.height = canvas.height;
-    const offCtx = offscreenCanvas.getContext('2d');
-
-    let currentY = layout.marginTop;
-
-    for (let i = 0; i < layout.count; i++) {
-      if (!members[i]) break;
-
-      if (currentY + cardHeightMm > pageHeight && currentY > layout.marginTop) {
-        pdf.addPage();
-        currentY = layout.marginTop;
-      }
-
-      drawSingleCardData(offCtx, offscreenCanvas, members[i], fmt);
-      const cardImgData = offscreenCanvas.toDataURL('image/png', 1.0);
-
-      pdf.addImage(cardImgData, 'PNG', effectiveMarginLeft, currentY, layout.width, cardHeightMm);
-      currentY += cardHeightMm + layout.gap;
-    }
-
-    pdf.save('CHM_Membership_Cards.pdf');
-  });
-
-  document.getElementById('downloadSingleBtn').addEventListener('click', () => {
-    if (!baseImage.src) {
-      alert("Please upload the card template first!");
-      return;
-    }
-    const link = document.createElement('a');
-    link.download = 'CHM_Single_Card.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  });
+    document.getElementById('downloadSingleBtn').addEventListener('click', () => {
+        if (!baseImage.src) {
+            alert("Please upload the card template first!");
+            return;
+        }
+        const link = document.createElement('a');
+        link.download = 'CHM_Single_Card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
 </script>
 
 </body>
